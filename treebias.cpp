@@ -1,128 +1,192 @@
-nclude <cmath>
+#include <cmath>
+
 #include <cstdio>
+
 #include <vector>
+
 #include <iostream>
+
 #include <algorithm>
+
 using namespace std;
 
-struct node
-{
-  int data,width;
-  struct node* left, *right;
+
+
+struct node {
+  int data;
+  int width;
+  node * left;
+  node * right;
+};
+
+class Tree {
+  int noOfElements;
+  node * root;
+
+  public:
+
+    Tree() {
+      noOfElements=0;
+      root = NULL;
+
+    }
+
+  node * newNode(int s, int width) {
+    node * newNode = new node;
+    newNode -> data = s;
+    newNode -> width = width;
+    newNode -> right = NULL;
+    newNode -> left = NULL;
+
+    noOfElements++;
+    return newNode;
+  }
+
+void addEdge(int src, int dest) {
+    if (root == NULL) {
   
-};
+      root = newNode( src,0);
+
+      root -> left = newNode(dest, 1);
 
 
-
-class Tree
-{
-   node* root;
-
-    public:
+    } else {
+   
+      int j=-1;
+      node**stack=new node*[noOfElements];
     
-   Tree(){
-          root=new node;
-               root->data=-1;
-                    root->width=0;
-                         root->left=NULL;
-                              root->right=NULL;
+      if (root -> data == src) {
+    
+        root -> right = newNode(dest, 1);
+       
+      } else {
+        node * finder = root -> left;
 
-                               
-   }
-
-    node* newNode(int s,int width)
-    { 
-         node *newNode=new node;
-            newNode->data=s;
-               newNode->width=width;
-                  newNode->right=NULL;
-                     newNode->left=NULL;  
-                        return newNode;
-                         
-    }
-
-    int addEdge(int src,int dest)
-    {
-          if(root->data=-1)
-          {
-                    root->data=src;
-                            root->left=newNode(dest,1);
-                                    return 1;
-                                            
-                                        
-          }
-              else
-                    {int i=0;
-                            if(root->data==src)
-                            {
-                                      root->right=newNode(dest,1);
-                                              return 1;
-                                                      
-                            }
-                            else
-                            {  node* finder=root->left;
-                                        for(i=0;i<2;i++)
-                                        {   
-                                                    
-                                                      while(finder!=NULL)
-                                                      {
-                                                                        if(finder->data==src)
-                                                                                          break;
-                                                                                        else 
-                                                                                                          finder=finder->left;
-                                                                                                    
-                                                      }
-                                                                  if(finder->data==src)
-                                                                                break;
-                                                                              finder=root->right;
-                                                                                          
-                                        }
-                                        if(finder!=NULL)
-                                        {     
-                                                          (finder->left==NULL)?finder->left=newNode(dest,2+i):finder->right=newNode(dest,2+i);
-                                                                      return 1;
-                                                                                  
-                                        }
-                                        else 
-                                        return 0;
-                                    }
-                        }
-              
-    }
-
-     int sumWidth()
-     {
-            node*widthSum=root->left;
-                 int sum=root->width;
-                      for(int i=0;i<2;i++)
-                      {
-                                 while(widthSum!=NULL)
-                                 {
-                                                sum+=widthSum->width;
-                                                             widthSum=widthSum->left;
-                                                                      
-                                 }
-                                          widthSum=widthSum->right;
-                                               
-                      }
-                           return sum;
-                            
-     }
-
+        //cout<<root->right->data;
      
+          while (finder != NULL) {
+            if (finder -> data == src)
+            {
+            
+                if(finder->left==NULL)
+                finder->left=newNode(dest,finder->width+1);
+                else if(finder->right==NULL)
+                finder->right=newNode(dest,finder->width+1);
+              break;}
+            else
+            { 
+              if(finder->left!=NULL)
+            {
+               if(finder->right!=NULL) 
+            stack[++j]=finder->right;
+              finder = finder -> left;
+            }
+            else if(j>=0)
+            {
+            finder=stack[j--];
+            }
+            else
+            {
+              finder=root->right;
+             }            }
+          }
+     
+        }
+      }
+    }
+  
+
+  int sumWidth()  {
+    node*elem=root;
+    int rights=-1;
+    node**stack=new node*[noOfElements];
+    int sum=0;
+      while(elem!=NULL )
+    { 
+      sum+=elem->width;
+      if(elem->right!=NULL)
+      {
+        //cout<<rights<<" h"<<elem->right;
+      stack[++rights]=elem->right;
+      }
+      elem=elem->left;
+      if(elem==NULL )
+      if(rights!=-1)
+      elem=stack[rights--];
+     
+    }
+    return sum;
+  }
+
+  int find(int n)
+  {
+     int result=-1;
+    node*elem=root;
+    int rights=-1;
+    node**stack=new node*[noOfElements];
+      while(elem!=NULL )
+    { 
+      if(elem->data==n)
+      { result=1;
+      return result;
+      }if(elem->right!=NULL)
+      {
+        //cout<<rights<<" h"<<elem->right;
+      stack[++rights]=elem->right;
+      }
+      elem=elem->left;
+      if(elem==NULL )
+      if(rights!=-1)
+      elem=stack[rights--];
+     
+    }
+  return result;
+    
+  
+  }
+
+  void print()
+  {
+    node*elem=root;
+    int rights=-1;
+    node**stack=new node*[noOfElements];
+      while(elem!=NULL )
+    { 
+      cout<<elem->data<<"\n";
+      if(elem->right!=NULL)
+      {
+        //cout<<rights<<" h"<<elem->right;
+      stack[++rights]=elem->right;
+      }
+      elem=elem->left;
+      if(elem==NULL )
+      if(rights!=-1)
+      elem=stack[rights--];
+     
+    }
+  
+    
+  }
 };
 
-int main() {
-      Tree bias;
-          int testCase,src,dest;
-              cin>>testCase;
-                  while(testCase!=0)
-                  {
-                            cin>>src>>dest;
-                                    bias.addEdge(src,dest);
-                                        
-                  }
-                      cout<<bias.sumWidth();
-                          return 0;
-                          
+int main() 
+{
+  Tree bias;
+  int n,j=0, src, dest;
+  
+  cin >> n;
+
+  while (n >= 0) {
+    cin >> src >> dest;
+    //cout<<"hi "<<src<<" dest"<<dest;
+    bias.addEdge(src, dest);
+    if(j==0)
+    { n-=2;
+    j++;
+    }
+   n--; 
+  }
+
+  cout<<"\n"<<bias.sumWidth();
+  return 0;
 }
